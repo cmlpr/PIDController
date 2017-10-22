@@ -9,13 +9,13 @@ The goal of the project is to control a car in a simulator using classical contr
 ## Implementation
 The simulator (link provided below) provides us a track and a car with basic controls. The C++ program gets the cross-track-error (cte) from the simulator and allows us to send steering angle and throttle back to the simulator. "Main.cpp" provides the codes necessary to do this communication. 
 
-CTE measures the deviation from the centerline of the track. 
+* CTE measures the deviation from the centerline of the track. 
 
-Proportianl term allows us to adjust the steering angle so that car turns to the middle of the road. We achieve this by multiplying the CTE with the proportional gain. When CTE is large the steering angle will also be large and when CTE is small the angle will also be small. When only P term is applied in the control the car osciallates around a horizontal line with an amplitude decay over time. The P control suffers from overshoot.
+* Proportianl term allows us to adjust the steering angle so that car turns to the middle of the road. We achieve this by multiplying the CTE with the proportional gain. When CTE is large the steering angle will also be large and when CTE is small the angle will also be small. When only P term is applied in the control the car osciallates around a horizontal line with an amplitude decay over time. The P control suffers from overshoot.
 
-Derivative term tries to bring the rate of change of the error to zero. This helps us to flatten out the osciallation amplitude reducing the overshoot. We multiply the rate of change of CTE ((current CTE - previous CTE) / Delta T) by the D factor. 
+* Derivative term tries to bring the rate of change of the error to zero. This helps us to flatten out the osciallation amplitude reducing the overshoot. We multiply the rate of change of CTE ((current CTE - previous CTE) / Delta T) by the D factor. 
 
-Integral term applies a correction that increases over time. If the car does not converge to center line, the error will accumulate and I term will start being effective to bring the car to the centerline. The integral term corrects any systematic bias that might exist in the system. Some examples could be the drift in the tires and bias in steering wheel. 
+* Integral term applies a correction that increases over time. If the car does not converge to center line, the error will accumulate and I term will start being effective to bring the car to the centerline. The integral term corrects any systematic bias that might exist in the system. Some examples could be the drift in the tires and bias in steering wheel. 
 
 PID controller is applied using the "PID.cpp" and "PID.h" files. The PID objects are created for both steering angle and the throttle. Initial values are found using trial and error. A hill climbing algorithm (Twiddle) has also been implemented to find better gain values. Since we cannot run the simulator multiple times to find the best parameters, I tried this method in real time. It record the cumulative error for 2000 iterations and compares it to the best available error to fine tune the gain values. Due to the time intensive nature of the method, I decided to use the parameters ajusted manually to record this [video] (https://www.youtube.com/watch?v=q_Cu8AFisB4). 
 
@@ -24,13 +24,16 @@ The PID controller for the steering angle is similar to the Python program we de
 In "main.cpp"
 
   Final Controller Gains:
+  ```
     double pK_init_steer[3] = {0.2, 0.0004, 4.0};
     double pK_init_throttle[3] = {0.3, 0.0000, 0.025};
+  ```
 
   Twiddle can be activated by activating:
+  ```
     pid_steer.Twiddle();
     pid_throttle.Twiddle();
-
+  ```
 --
 
 ## Dependencies
